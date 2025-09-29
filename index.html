@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Oppi · Página Compleja</title>
+  <meta name="description" content="Página compleja para pretesina Oppi con AOS, buscador, generador .ini, drag & drop, perfil editable y diseño moderno." />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+  <style>
+    /* ===== Diseño renovado ===== */
+    :root{
+      --bg:#0a0b0f; --surface:#11131a; --muted:#161926; --text:#e9ecf5; --sub:#aeb3c7;
+      --primary:#ff5a5a; --accent:#32c5ff; --ok:#2ecc71; --warn:#ffd166;
+      --radius:18px; --radius-sm:12px; --shadow:0 14px 40px rgba(0,0,0,.35);
+      --border:1px solid rgba(255,255,255,.08); --glass:rgba(255,255,255,.06); --glass2:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial;
+      color:var(--text); background:
+        radial-gradient(1000px 400px at 10% -10%, rgba(255,90,90,.06), transparent),
+        radial-gradient(800px 300px at 90% 10%, rgba(50,197,255,.07), transparent),
+        var(--bg);
+    }
+    h1{font-size:clamp(28px,5vw,46px); line-height:1.1; letter-spacing:.2px; margin:0 0 .5rem}
+    h2{font-size:clamp(22px,4vw,34px); margin:0 0 12px}
+    h3{font-size:clamp(18px,3vw,22px); margin:0 0 8px}
+    p{margin:0}
+    .lead{color:var(--sub)}
+    .container{max-width:1200px; margin:0 auto; padding:0 20px}
+    .section{padding:80px 0}
+
+    /* Header */
+    .site-header{position:sticky; top:0; z-index:1000; border-bottom:var(--border);
+      background:rgba(17,19,26,.6); backdrop-filter:saturate(140%) blur(12px)}
+    .nav.container{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 20px}
+    .logo{font-weight:700; color:#fff; text-decoration:none; letter-spacing:.3px}
+    .logo span{color:var(--primary)}
+    .nav-right{display:flex; gap:10px; align-items:center}
+    .icon-btn{border:var(--border); background:rgba(255,255,255,.02); color:#fff; padding:8px 12px; border-radius:12px; cursor:pointer; transition:all .2s}
+    .icon-btn:hover{background:var(--glass)}
+    .search{display:flex; align-items:center; gap:8px; background:var(--surface); border:var(--border); padding:6px 10px; border-radius:12px; box-shadow:inset 0 0 0 1px var(--glass)}
+    .search svg{opacity:.8}
+    .search input{background:transparent; border:none; color:#fff; outline:none; width:180px}
+
+    /* Hero */
+    #scrollbar{position:fixed; top:0; left:0; height:4px; width:0; background:linear-gradient(90deg,var(--primary),var(--accent)); z-index:1001}
+    .hero{display:grid; grid-template-columns:1.3fr 1fr; gap:28px; align-items:center; min-height:72vh; position:relative}
+    .hero::before{content:""; position:absolute; inset:-1px; pointer-events:none;
+      background:
+        radial-gradient(600px 220px at 20% 20%, rgba(255,90,90,.12), transparent),
+        radial-gradient(600px 220px at 85% 65%, rgba(50,197,255,.12), transparent)}
+    .hero__actions{display:flex; gap:10px; margin-top:12px; flex-wrap:wrap}
+    .hero__badges{display:flex; gap:8px; list-style:none; margin:16px 0 0; padding:0; flex-wrap:wrap}
+    .hero__badges li{background:var(--surface); border:var(--border); padding:6px 10px; border-radius:999px; font-size:14px; color:var(--sub)}
+    .hero__art{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+    .orb{height:120px; border-radius:22px; background:linear-gradient(180deg,#21242f,#0f1118); box-shadow:var(--shadow)}
+
+    /* Botones */
+    .btn{border:var(--border); background:#1a1d27; color:#fff; padding:10px 14px; border-radius:12px; cursor:pointer; transition:transform .15s, box-shadow .2s, background .2s}
+    .btn.primary{background:var(--primary); border:none}
+    .btn.ghost{background:transparent}
+    .btn.small{padding:8px 10px}
+    .btn:hover{transform:translateY(-1px); box-shadow:0 10px 26px rgba(0,0,0,.28)}
+    .btn.primary:hover{filter:saturate(115%)}
+
+    /* Grids / Cards */
+    .grid2{display:grid; grid-template-columns:repeat(2,1fr); gap:16px}
+    .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+    .grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+    @media (max-width:1000px){.hero{grid-template-columns:1fr}.grid4{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01)); border:var(--border); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow); transition:transform .25s ease, border-color .25s ease}
+    .card:hover{transform:translateY(-3px); border-color:var(--glass2)}
+    .list{padding-left:18px}
+    .list.check li::marker{content:"✓ "; color:var(--ok)}
+
+    /* Perfil personal */
+    .profile.card{display:grid; grid-template-columns:160px 1fr; gap:18px; align-items:start}
+    .profile__media{display:grid; gap:10px; justify-items:center}
+    .profile__media img{width:140px; height:140px; border-radius:50%; object-fit:cover; border:2px solid var(--glass2); box-shadow:var(--shadow)}
+    .chips{display:flex; gap:8px; flex-wrap:wrap; padding:0; margin:.6rem 0 0; list-style:none}
+    .chip{padding:6px 10px; border-radius:999px; border:1px solid var(--glass2); background:var(--surface); font-size:14px}
+    .chip[contenteditable="true"]:focus{outline:2px solid var(--accent)}
+    @media (max-width:800px){.profile.card{grid-template-columns:1fr}}
+
+    /* Galería */
+    .gallery{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+    .gallery img{width:100%; height:170px; object-fit:cover; border-radius:12px; opacity:.98; transition:transform .25s ease, box-shadow .25s ease}
+    .gallery img:hover{transform:translateY(-2px) scale(1.01); box-shadow:0 16px 40px rgba(0,0,0,.35)}
+
+    /* Formularios */
+    .input,.form input,.form textarea,.form select{
+      background:#0f121b; border:1px solid rgba(255,255,255,.12); border-radius:12px; color:#fff; padding:12px 14px}
+    .form{display:grid; gap:12px; max-width:680px}
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .form__msg{height:20px}
+    .ini{width:100%; min-height:160px; background:#0a0d15; color:#d6fbd6; border:1px solid rgba(255,255,255,.12); border-radius:12px; margin-top:10px; padding:12px}
+
+    /* Dropzone */
+    .dropzone{border:2px dashed rgba(255,255,255,.25); border-radius:14px; padding:18px; text-align:center; color:var(--sub); transition:border-color .2s, background .2s}
+    .dropzone.drag{border-color:var(--accent); color:#fff; background:#0f1320}
+
+    /* Footer */
+    .footer{border-top:var(--border); margin-top:32px}
+    .footer__grid{display:flex; align-items:center; justify-content:space-between; padding:16px 20px}
+
+    /* Modales */
+    .modal{border:none; padding:0; background:transparent}
+    .modal::backdrop{background:rgba(0,0,0,.6)}
+    .modal__card{background:var(--surface); border:var(--border); border-radius:16px; padding:14px; min-width:320px; max-width:780px}
+    .modal__body{display:grid; gap:10px}
+    .modal__actions{display:flex; gap:10px; justify-content:flex-end}
+
+    /* Accesibilidad y utilidades */
+    .skip{position:absolute; left:-999px; top:auto; width:1px; height:1px; overflow:hidden}
+    .skip:focus{left:8px; top:8px; width:auto; height:auto; background:#000; color:#fff; padding:8px; border-radius:8px; z-index:10000}
+    .back-top{background:var(--muted); padding:8px 10px; border-radius:10px; text-decoration:none; color:#fff; border:var(--border)}
+    .muted{color:var(--sub)}
+    kbd{background:#222; padding:2px 6px; border-radius:6px; border:1px solid #333}
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip">Saltar al contenido</a>
+  <div id="scrollbar"></div>
+
+  <header class="site-header" data-hide-on-scroll>
+    <nav class="nav container">
+      <a href="#top" class="logo">Oppi<span>·</span>Compleja</a>
+      <div class="search" role="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z" stroke="#aaa" stroke-width="2"/></svg>
+        <input id="globalSearch" placeholder="Buscar en la página (Ctrl+K)">
+      </div>
+      <a class="icon-btn" href="#sobre-mi" title="Sobre mí">👤</a>
+      <div class="nav-right">
+        <button id="shortcutsBtn" class="icon-btn" title="Atajos (?)">?</button>
+        <button id="themeToggle" class="icon-btn" title="Tema">🌓</button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section id="top" class="hero container" data-aos="fade-down" data-aos-duration="900">
+    <div class="hero__content" data-aos="fade-left">
+      <h1>Página web compleja para tu pretesina</h1>
+      <p class="lead">Animaciones AOS, buscador global, generador de perfiles <code>.ini</code>, drag & drop, perfil editable y diseño moderno.</p>
+      <div class="hero__actions">
+        <a class="btn primary" href="#lab">Ir al Laboratorio</a>
+        <button class="btn" id="openIniBuilder">Generar perfil .ini</button>
+        <button class="btn ghost" id="shareBtn">Compartir</button>
+      </div>
+      <ul class="hero__badges">
+        <li data-aos="zoom-in" data-aos-delay="100">AOS Animations</li>
+        <li data-aos="zoom-in" data-aos-delay="200">Keyboard Shortcuts</li>
+        <li data-aos="zoom-in" data-aos-delay="300">Offline-friendly*</li>
+      </ul>
+    </div>
+    <div class="hero__art" aria-hidden="true" data-aos="zoom-in">
+      <div class="orb"></div><div class="orb"></div><div class="orb"></div>
+    </div>
+  </section>
+
+  <main id="main">
+    <!-- SOBRE MÍ -->
+    <section id="sobre-mi" class="section container" data-aos="fade-up">
+      <h2>Sobre mí</h2>
+      <div class="profile card">
+        <div class="profile__media" data-aos="zoom-in">
+          <img id="myAvatar" src="yo.png" alt="Tu avatar">
+          <label class="btn small" for="avatarInput">Cambiar foto</label>
+          <input id="avatarInput" type="file" accept="image/*" hidden>
+        </div>
+        <div class="profile__body" data-aos="fade-left">
+          <h3 id="myName" contenteditable="true">Pedro Cabezas</h3>
+          <p class="muted" contenteditable="true">Soy estudiante de 5to año en desarrollo de un asistente virtual de impresión 3D con IA.</p>
+          <h4>Habilidades y conocimientos</h4>
+          <ul class="chips" id="skillsList">
+            <li class="chip" contenteditable="true">HTML</li>
+            <li class="chip" contenteditable="true">CSS</li>
+            <li class="chip" contenteditable="true">JavaScript</li>
+            <li class="chip" contenteditable="true">Impresión 3D</li>
+          </ul>
+          <h4 style="margin-top:12px">Objetivos / deseos</h4>
+          <ul class="list" id="goalsList">
+            <li contenteditable="true">Mejorar la creación de archivos .ini personalizados para la impresión.</li>
+            <li contenteditable="true">Mejorar en UI/UX y prototipado rápido.</li>
+            <li contenteditable="true">Potenciar la IA para automatizar procesos de impresión 3D.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="section container" data-aos="fade-up">
+      <h2>Características clave</h2>
+      <div class="grid4">
+        <article class="card" data-aos="zoom-in"><h3>Accesibilidad</h3><p>Skip links, contraste, ARIA y atajos.</p></article>
+        <article class="card" data-aos="fade-left"><h3>Rendimiento</h3><p>Lazy-load, canvas nativo, sin librerías pesadas.</p></article>
+        <article class="card" data-aos="fade-up"><h3>Persistencia</h3><p>Preferencias en <code>localStorage</code> (tema, borradores, perfil).</p></article>
+        <article class="card" data-aos="zoom-in"><h3>Modularidad</h3><p>Componentes reutilizables (modal, dropzone).</p></article>
+      </div>
+    </section>
+
+    <!-- LAB / INTERACTIVO (solo generador + dropzone) -->
+    <section id="lab" class="section container" data-aos="fade-up">
+      <h2>Laboratorio interactivo</h2>
+      <div class="grid2">
+        <article class="card">
+          <h3>Generador de perfiles .ini</h3>
+          <p>Definí calidad, material, relleno, soportes y velocidad base.</p>
+          <button class="btn primary" id="openIniBuilder2">Abrir generador</button>
+        </article>
+
+        <article class="card">
+          <h3>Analizar un .ini</h3>
+          <div class="dropzone" id="dropzone" tabindex="0" aria-label="Arrastrá tu .ini aquí para analizar">
+            Arrastrá y soltá un <code>.ini</code> para leerlo.
+          </div>
+          <textarea id="iniPreview" class="ini" readonly placeholder="Vista previa .ini / análisis"></textarea>
+        </article>
+      </div>
+    </section>
+
+    <!-- GALERÍA -->
+    <section id="galeria" class="section container" data-aos="fade-up">
+      <h2>Galería</h2>
+      <div class="gallery">
+        <img data-src="https://picsum.photos/seed/pla/640/360" alt="Impresión PLA" class="lazy" data-aos="zoom-in">
+        <img data-src="https://picsum.photos/seed/petg/640/360" alt="Impresión PETG" class="lazy" data-aos="zoom-in">
+        <img data-src="https://picsum.photos/seed/abs/640/360" alt="Impresión ABS" class="lazy" data-aos="zoom-in">
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section container" data-aos="fade-up">
+      <h2>Preguntas frecuentes</h2>
+      <details open><summary>¿Cómo importo el .ini?</summary><p>PrusaSlicer → Preferencias → Importar y seleccionás el archivo.</p></details>
+      <details><summary>¿Funciona offline?</summary><p>Guardamos preferencias en el navegador; podés usarlo sin conexión luego de cargarlo una vez.</p></details>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contacto" class="section container" data-aos="fade-up">
+      <h2>Contacto</h2>
+      <form id="contactForm" class="form" action="#" method="POST" onsubmit="return false;">
+        <label>Nombre<input name="name" required></label>
+        <label>Correo<input type="email" name="email" required></label>
+        <label>Mensaje<textarea name="message" rows="4" required></textarea></label>
+        <div class="row">
+          <button class="btn primary" id="sendMsg" type="submit">Enviar</button>
+          <button class="btn" type="button" id="saveDraft">Guardar borrador</button>
+          <button class="btn ghost" type="button" id="loadDraft">Cargar borrador</button>
+        </div>
+        <p class="form__msg" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__grid">
+      <small>© <span id="year"></span> Oppi – Página Compleja</small>
+      <a href="#top" class="back-top" id="backTop">↑</a>
+    </div>
+  </footer>
+
+  <!-- MODAL: Generador .ini -->
+  <dialog id="iniBuilder" class="modal">
+    <form method="dialog" class="modal__card">
+      <header><h3>Generar perfil .ini</h3></header>
+      <div class="modal__body grid2">
+        <label>Calidad de capa
+          <select id="quality">
+            <option value="0.12">Alta (0.12 mm)</option>
+            <option value="0.20" selected>Media (0.20 mm)</option>
+            <option value="0.28">Rápida (0.28 mm)</option>
+          </select>
+        </label>
+        <label>Resistencia
+          <select id="strength">
+            <option value="strong">Alta</option>
+            <option value="normal" selected>Normal</option>
+            <option value="light">Liviana</option>
+          </select>
+        </label>
+        <label>Material
+          <select id="material"><option>PLA</option><option>PETG</option><option>ABS</option></select>
+        </label>
+        <label>Relleno (%)
+          <input type="range" id="infill" min="5" max="60" step="5" value="20" oninput="this.nextElementSibling.value=this.value">
+          <output>20</output>
+        </label>
+        <label class="row"><input type="checkbox" id="supports"> Soportes automáticos</label>
+        <label class="row"><input type="checkbox" id="variableLayer"> Altura de capa variable</label>
+        <label>Velocidad base (mm/s)
+          <input type="number" id="baseSpeed" min="20" max="120" value="60">
+        </label>
+      </div>
+      <footer class="modal__actions">
+        <button id="buildIni" class="btn primary" type="button">Generar y descargar</button>
+        <button class="btn" type="submit">Cerrar</button>
+      </footer>
+      <textarea id="iniPreviewModal" class="ini" readonly placeholder="Vista previa del .ini"></textarea>
+    </form>
+  </dialog>
+
+  <!-- MODAL: Atajos -->
+  <dialog id="shortcuts" class="modal">
+    <form method="dialog" class="modal__card">
+      <header><h3>Atajos de teclado</h3></header>
+      <ul class="list">
+        <li><kbd>G</kbd> Abrir generador .ini</li>
+        <li><kbd>Ctrl</kbd> + <kbd>K</kbd> Búsqueda global</li>
+        <li><kbd>Alt</kbd> + <kbd>↑/↓</kbd> Navegar secciones</li>
+      </ul>
+      <footer class="modal__actions"><button class="btn">Cerrar</button></footer>
+    </form>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>
+  // ===== Helpers =====
+  const $ = (s, d=document)=>d.querySelector(s);
+  const $$ = (s, d=document)=>Array.from(d.querySelectorAll(s));
+
+  // Año
+  $('#year').textContent = new Date().getFullYear();
+
+  // AOS
+  AOS.init();
+
+  // Barra progreso scroll
+  const scrollbar = $('#scrollbar');
+  addEventListener('scroll', ()=>{
+    const h = document.documentElement;
+    scrollbar.style.width = (h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
+  });
+
+  // Header auto-hide
+  let lastY=0; const header=document.querySelector('[data-hide-on-scroll]');
+  addEventListener('scroll', ()=>{
+    const y=scrollY; header.style.transform=(y>lastY && y>120)?'translateY(-100%)':'translateY(0)'; lastY=y;
+  });
+
+  // Tema persistente
+  const PREF='theme'; const themeToggle=$('#themeToggle');
+  const pref=localStorage.getItem(PREF); if (pref) document.documentElement.dataset.theme=pref;
+  themeToggle.addEventListener('click', ()=>{
+    const cur = document.documentElement.dataset.theme==='light'?'dark':'light';
+    document.documentElement.dataset.theme = cur; localStorage.setItem(PREF,cur);
+  });
+
+  // Back-to-top
+  const backTop=$('#backTop'); const onScroll=()=> backTop.classList.toggle('hidden', scrollY<600);
+  addEventListener('scroll', onScroll); onScroll();
+
+  // Compartir
+  $('#shareBtn')?.addEventListener('click', async ()=>{
+    try{ if(navigator.share) await navigator.share({title:document.title,url:location.href});
+         else await navigator.clipboard.writeText(location.href);
+         alert('¡Listo! Compartido/copiado.'); }catch{}
+  });
+
+  // Lazy images
+  const lazy=$$('.lazy');
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.src = e.target.dataset.src; obs.unobserve(e.target);} });
+  },{rootMargin:'200px'});
+  lazy.forEach(img=>obs.observe(img));
+
+  // Buscador global (Ctrl+K)
+  const globalSearch=$('#globalSearch');
+  addEventListener('keydown', (e)=>{ if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); globalSearch.focus(); }});
+  globalSearch.addEventListener('input', ()=>{
+    const q=globalSearch.value.toLowerCase();
+    const first = $$('section h2').find(h2=>h2.textContent.toLowerCase().includes(q));
+    if (first) first.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  // Atajos de teclado
+  const shortcutsModal=$('#shortcuts');
+  $('#shortcutsBtn').addEventListener('click', ()=>shortcutsModal.showModal());
+  addEventListener('keydown', (e)=>{
+    if (e.key==='g' || e.key==='G'){ e.preventDefault(); $('#iniBuilder').showModal(); }
+    if (e.key==='?'){ e.preventDefault(); shortcutsModal.showModal(); }
+    if (e.altKey && (e.key==='ArrowDown' || e.key==='ArrowUp')){
+      e.preventDefault();
+      const ids=['features','lab','galeria','faq','contacto'];
+      let i=ids.findIndex(id=>document.getElementById(id).getBoundingClientRect().top>-10);
+      if (e.key==='ArrowUp') i=Math.max(0,i-1); else i=Math.min(ids.length-1,i+1);
+      document.getElementById(ids[i]).scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+
+  // Generador .ini
+  const iniDialog=$('#iniBuilder');
+  $('#openIniBuilder').addEventListener('click', ()=> iniDialog.showModal());
+  $('#openIniBuilder2').addEventListener('click', ()=> iniDialog.showModal());
+  function buildIni(){
+    const q=$('#quality').value; const strength=$('#strength').value; const mat=$('#material').value;
+    const infill=$('#infill').value; const supports=$('#supports').checked; const varLayer=$('#variableLayer').checked; const baseSpeed=parseInt($('#baseSpeed').value,10);
+    const temps={ PLA:{nozzle:205,bed:60}, PETG:{nozzle:235,bed:80}, ABS:{nozzle:245,bed:95} }[mat];
+    const speedByQ={ '0.12':Math.max(30,baseSpeed-20), '0.20':Math.max(40,baseSpeed-10), '0.28':baseSpeed };
+    const perimeters= strength==='strong'?4 : strength==='normal'?3 : 2;
+    const ini = `# Oppi - perfil generado
+# Material=${mat} Calidad=${q}mm Infill=${infill}% Soportes=${supports} VarLayer=${varLayer}
+[print:Oppi ${mat} ${q}mm ${infill}%]
+layer_height=${q}
+perimeters=${perimeters}
+fill_density=${infill}%
+support_material=${supports?1:0}
+support_material_auto=${supports?1:0}
+variable_layer_height=${varLayer?1:0}
+first_layer_height=0.2
+infill_speed=${speedByQ[q]}
+perimeter_speed=${Math.max(25,speedByQ[q]-10)}
+travel_speed=170
+external_perimeter_speed=${Math.max(20,speedByQ[q]-15)}
+
+[filament:Oppi ${mat}]
+filament_type=${mat}
+temperature=${temps.nozzle}
+bed_temperature=${temps.bed}
+fan_always_on=${mat==='PLA'?1:0}
+min_fan_speed=${mat==='PLA'?45:5}
+max_fan_speed=${mat==='PLA'?100:35}
+
+[printer:Oppi Generic]
+nozzle_diameter=0.4
+gcode_flavor=marlin
+`;
+    $('#iniPreviewModal').value = ini; $('#iniPreview').value = ini;
+    const blob=new Blob([ini],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`Oppi_${mat}_${q.replace('.','p')}mm_${infill}pct.ini`; a.click(); URL.revokeObjectURL(a.href);
+  }
+  $('#buildIni').addEventListener('click', buildIni);
+
+  // Dropzone .ini -> análisis
+  const dz=$('#dropzone');
+  function dzOn(e){ e.preventDefault(); e.stopPropagation(); dz.classList.add('drag'); }
+  function dzOff(e){ e.preventDefault(); e.stopPropagation(); dz.classList.remove('drag'); }
+  ['dragenter','dragover'].forEach(ev=> dz.addEventListener(ev, dzOn));
+  ;['dragleave','drop'].forEach(ev=> dz.addEventListener(ev, dzOff));
+  dz.addEventListener('drop', async (e)=>{
+    const f=e.dataTransfer.files?.[0]; if(!f) return; if(!f.name.endsWith('.ini')){ alert('Subí un archivo .ini'); return; }
+    const text = await f.text(); $('#iniPreview').value = text;
+    const lines=text.split(/\r?\n/).filter(l=>/\w+=/.test(l)).slice(0,20);
+    const parsed=lines.map(l=>l.split('=').map(s=>s.trim()));
+    console.table(Object.fromEntries(parsed));
+  });
+
+  // Form: borrador
+  const DRAFT='contact_draft_v2'; const form=$('#contactForm');
+  $('#saveDraft').addEventListener('click', ()=>{
+    const data=Object.fromEntries(new FormData(form).entries());
+    localStorage.setItem(DRAFT, JSON.stringify(data)); $('.form__msg').textContent='Borrador guardado.';
+  });
+  $('#loadDraft').addEventListener('click', ()=>{
+    const raw=localStorage.getItem(DRAFT); if(!raw) return; const data=JSON.parse(raw);
+    for (const [k,v] of Object.entries(data)){ const el=$(`[name="${k}"]`); if(el) el.value=v; }
+    $('.form__msg').textContent='Borrador cargado.';
+  });
+  $('#sendMsg').addEventListener('click', ()=>{ $('.form__msg').textContent='Enviando...'; setTimeout(()=> $('.form__msg').textContent='¡Gracias! Te responderemos pronto.', 800); });
+
+  // Perfil personal persistente (avatar + nombre)
+  const AV_KEY='profile_avatar_dataurl';
+  const NAME_KEY='profile_name_text';
+  const avatarInput = document.getElementById('avatarInput');
+  const avatarImg = document.getElementById('myAvatar');
+  const nameEl = document.getElementById('myName');
+  try{ const savedA = localStorage.getItem(AV_KEY); if(savedA) avatarImg.src = savedA; }catch{}
+  try{ const savedN = localStorage.getItem(NAME_KEY); if(savedN) nameEl.textContent = savedN; }catch{}
+  nameEl?.addEventListener('blur', ()=>{ try{ localStorage.setItem(NAME_KEY, nameEl.textContent.trim()); }catch{} });
+  avatarInput?.addEventListener('change', async (e)=>{
+    const f = e.target.files?.[0]; if(!f) return; const r = new FileReader();
+    r.onload = ()=>{ avatarImg.src = r.result; try{ localStorage.setItem(AV_KEY, r.result); }catch{} };
+    r.readAsDataURL(f);
+  });
+  </script>
+</body>
+</html>
